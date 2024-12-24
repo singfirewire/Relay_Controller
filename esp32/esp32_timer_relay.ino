@@ -50,10 +50,9 @@ const char* mqtt_password = "";     // Public broker ไม่ต้องใส
 const char* device_id = "esp32_timer_relay_01"; 
 
 // MQTT Topics
-// เปลี่ยนเฉพาะส่วน MQTT Topics
-const char* topic_relay1_control = "singfirewire/relay1/control";
-const char* topic_relay2_control = "singfirewire/relay2/control";
-const char* topic_status = "singfirewire/relay/status";
+const char* topic_relay1_control = "singfirewire/relay/relay1/control"; // **เพิ่ม prefix "singfirewire/relay"**
+const char* topic_relay2_control = "singfirewire/relay/relay2/control"; // **เพิ่ม prefix "singfirewire/relay"**
+const char* topic_status = "singfirewire/relay/status"; 
 const char* topic_command = "singfirewire/relay/command";
 
 // ส่วนที่เหลือคงเดิมทั้งหมด
@@ -294,14 +293,14 @@ void publishStatus() {
     relay1["active"] = relay1Active;
     if (relay1Active) {
         unsigned long remaining = (relay1StartTime + COUNTDOWN_TIME - millis()) / 1000;
-        relay1["remaining_seconds"] = remaining;
+        relay1["remaining"] = remaining; // **แก้ไข field name เป็น "remaining"** 
     }
-    
+
     JsonObject relay2 = doc.createNestedObject("relay2");
     relay2["active"] = relay2Active;
     if (relay2Active) {
         unsigned long remaining = (relay2StartTime + COUNTDOWN_TIME - millis()) / 1000;
-        relay2["remaining_seconds"] = remaining;
+        relay2["remaining"] = remaining; // **แก้ไข field name เป็น "remaining"**
     }
 
     char buffer[400];
