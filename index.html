@@ -4,114 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timer Relay Controller</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .status-box {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .relay-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .relay-card {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .timer {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        button {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-on {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .btn-off {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn-reset {
-            background: #2196F3;
-            color: white;
-            grid-column: span 2;
-        }
-
-        .wifi-status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-        }
-
-        .signal-strength {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.9em;
-        }
-
-        @media (max-width: 480px) {
-            .relay-controls {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1 style="text-align: center; margin-bottom: 20px;">Timer Relay Controller</h1>
+        <div class="app-header">
+            <h1>Timer Relay Controller</h1>
+            <div class="version">v1.2.1</div>
+        </div>
         
         <div class="relay-controls">
             <div class="relay-card">
@@ -140,72 +41,6 @@
             <span id="signal-strength" class="signal-strength">RSSI: -70 dBm</span>
         </div>
     </div>
-
-    <script>
-        // MQTT configuration
-        const broker = 'broker.hivemq.com';
-        const port = 1883;
-        const deviceId = 'esp32_timer_relay_01';
-
-        // MQTT topics
-        const statusTopic = 'home/relay/status';
-        const relay1Topic = 'home/relay1/control';
-        const relay2Topic = 'home/relay2/control';
-
-        function controlRelay(relayNumber, action) {
-            const topic = relayNumber === 1 ? relay1Topic : relay2Topic;
-            const message = {
-                action: action
-            };
-            
-            // ส่งคำสั่งผ่าน MQTT (ต้องเพิ่มโค้ดเชื่อมต่อ MQTT)
-            console.log(`Sending command to ${topic}:`, message);
-        }
-
-        function updateStatus(status) {
-            // อัพเดทสถานะ WiFi
-            document.getElementById('wifi-status').textContent = 
-                `WiFi: ${status.wifi_connected ? 'เชื่อมต่อแล้ว' : 'ไม่ได้เชื่อมต่อ'}`;
-            document.getElementById('signal-strength').textContent = 
-                `RSSI: ${status.wifi_rssi} dBm`;
-
-            // อัพเดทเวลาของ Relay 1
-            if (status.relay1.active) {
-                const minutes = Math.floor(status.relay1.remaining_seconds / 60);
-                const seconds = status.relay1.remaining_seconds % 60;
-                document.getElementById('timer1').textContent = 
-                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            } else {
-                document.getElementById('timer1').textContent = '40:00';
-            }
-
-            // อัพเดทเวลาของ Relay 2
-            if (status.relay2.active) {
-                const minutes = Math.floor(status.relay2.remaining_seconds / 60);
-                const seconds = status.relay2.remaining_seconds % 60;
-                document.getElementById('timer2').textContent = 
-                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            } else {
-                document.getElementById('timer2').textContent = '40:00';
-            }
-        }
-
-        // จำลองการรับข้อมูลสถานะ
-        setInterval(() => {
-            const mockStatus = {
-                wifi_connected: true,
-                wifi_rssi: -65,
-                relay1: {
-                    active: true,
-                    remaining_seconds: Math.floor(Math.random() * 2400)
-                },
-                relay2: {
-                    active: false,
-                    remaining_seconds: 0
-                }
-            };
-            updateStatus(mockStatus);
-        }, 1000);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
