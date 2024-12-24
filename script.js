@@ -102,12 +102,17 @@ function controlRelay(relayNumber, action) {
 
 function updateStatus(status) {
   try {
-    const mqttStatus = mqttClient.isConnected() ? 'Connected' : 'Disconnected';
-    document.getElementById('wifi-status').textContent =
-      `WiFi: ${status.wifi_connected ? 'เชื่อมต่อแล้ว' : 'ไม่ได้เชื่อมต่อ'} | MQTT: ${mqttStatus}`;
+    // ตรวจสอบว่าได้รับข้อมูล status.wifi_connected จากบอร์ด ESP32 หรือไม่
+    if (status.hasOwnProperty('wifi_connected')) {
+      // ถ้าได้รับข้อมูล ให้แสดงสถานะตามที่ได้รับมา
+      document.getElementById('wifi-status').textContent = `WiFi: ${status.wifi_connected ? 'เชื่อมต่อแล้ว' : 'ไม่ได้เชื่อมต่อ'}`;
+    } else {
+      // ถ้าไม่ได้รับข้อมูล ให้แสดงว่าเชื่อมต่อไม่ได้
+      document.getElementById('wifi-status').textContent = `WiFi: เชื่อมต่อไม่ได้`;
+    }
 
-    document.getElementById('signal-strength').textContent =
-      `RSSI: ${status.wifi_rssi} dBm`;
+    // อัพเดทความแรงสัญญาณ
+    document.getElementById('signal-strength').textContent = `RSSI: ${status.wifi_rssi} dBm`;
 
     if (status.relay1?.active) {
       const minutes = Math.floor(status.relay1.remaining / 60); // แก้ไข field name
