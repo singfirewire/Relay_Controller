@@ -134,6 +134,8 @@
     mqttClient.onConnectionLost = onConnectionLost;
     mqttClient.onMessageArrived = onMessageArrived;
 
+    let resultText = ""; // ประกาศตัวแปร resultText ไว้ด้านนอก
+
     document.addEventListener('DOMContentLoaded', function () {
       // จัดการ click event สำหรับทุกปุ่ม
       document.querySelectorAll('button').forEach(button => {
@@ -152,6 +154,7 @@
         });
       });
     });
+
 
     // Connect to MQTT broker
     function connectMQTT() {
