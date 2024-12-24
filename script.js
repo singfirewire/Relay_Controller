@@ -56,7 +56,8 @@ function onConnect() {
     
       // Publish empty message to request status from ESP32
       const message = new Paho.MQTT.Message('');
-      message.destinationName = topic_command;
+message.destinationName = 'home/relay/command';
+
       mqttClient.send(message);
     }
     
