@@ -46,13 +46,22 @@ function onConnect() {
   const subscribeOptions = { qos: 1 };
   mqttClient.subscribe(statusTopic, subscribeOptions);
   mqttClient.subscribe('home/relay/command', subscribeOptions);
-  mqttClient.send(new Paho.MQTT.Message(JSON.stringify({ command: "status" })), 'home/relay/command');
+  const message = new Paho.MQTT.Message(JSON.stringify({ command: "status" }));
+  message.destinationName = 'home/relay/command';
+  mqttClient.send(message);
 }
 
 function updateStatus(status) {
   try {
-    const mqttStatus = mqttClient.isConnected() ? 'Connected' : 'Disconnected';
-    document.getElementById('wifi-status').textContent = `WiFi: ${status.wifi_connected ? 'เชื่อมต่อแล้ว' : 'เชื่อมต่อไม่ได้'} | MQTT: ${mqttStatus}`;
+    if (status.hasOwnProperty('wifi_connected')) {
+      if (!status.wifi_connected) {
+        document.getElementById('wifi-status').textContent = 'WiFi: ไม่ได้เชื่อมต่อ';
+      } else {
+        document.getElementById('wifi-status').textContent = 'WiFi: เชื่อมต่อแล้ว';
+      }
+    } else {
+      document.getElementById('wifi-status').textContent = 'WiFi: เชื่อมต่อไม่ได้';
+    }
     document.getElementById('signal-strength').textContent = `RSSI: ${status.wifi_rssi} dBm`;
 
     if (status.relay1?.active) {
