@@ -59,12 +59,39 @@ body {
 }
 
 button {
-    padding: 10px;
+    padding: 15px;  /* เพิ่มขนาดปุ่ม */
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;  /* เพิ่มความโค้งมน */
     cursor: pointer;
     font-weight: bold;
+    font-size: 1.1rem;  /* เพิ่มขนาดตัวอักษร */
     transition: all 0.3s ease;
+    min-height: 50px;  /* กำหนดความสูงขั้นต่ำ */
+    touch-action: manipulation;  /* ปรับปรุงการตอบสนองบนมือถือ */
+}
+
+button:active {
+    transform: scale(0.95);  /* เอฟเฟกต์เมื่อกด */
+}
+
+.btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;  /* เพิ่มระยะห่างระหว่างปุ่ม */
+    margin: 15px 0;
+}
+
+/* เพิ่ม hover effect */
+.btn-on:hover {
+    background: #45a049;
+}
+
+.btn-off:hover {
+    background: #d32f2f;
+}
+
+.btn-reset:hover {
+    background: #1976d2;
 }
 
 .btn-on {
