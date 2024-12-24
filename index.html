@@ -19,9 +19,13 @@
                 <h2>Relay 1</h2>
                 <div class="timer" id="timer1">40:00</div>
                 <div class="btn-group">
-                    <button class="btn-on" onclick="controlRelay(1, 'ON')">เปิด</button>
-                    <button class="btn-off" onclick="controlRelay(1, 'OFF')">ปิด</button>
-                    <button class="btn-reset" onclick="controlRelay(1, 'RESET')">รีเซ็ตเวลา</button>
+                    
+
+                    <!-- เปลี่ยนจาก onclick เป็น data-action -->
+<button class="btn-on" data-relay="1" data-action="ON">เปิด</button>
+<button class="btn-off" data-relay="1" data-action="OFF">ปิด</button>
+<button class="btn-reset" data-relay="1" data-action="RESET">รีเซ็ตเวลา</button>
+                    
                 </div>
             </div>
 
