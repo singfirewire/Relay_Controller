@@ -50,10 +50,13 @@ const char* mqtt_password = "";     // Public broker ไม่ต้องใส
 const char* device_id = "esp32_timer_relay_01"; 
 
 // MQTT Topics
-const char* topic_relay1_control = "home/relay1/control";
-const char* topic_relay2_control = "home/relay2/control";
-const char* topic_status = "home/relay/status";
-const char* topic_command = "home/relay/command";
+// เปลี่ยนเฉพาะส่วน MQTT Topics
+const char* topic_relay1_control = "singfirewire/relay1/control";
+const char* topic_relay2_control = "singfirewire/relay2/control";
+const char* topic_status = "singfirewire/relay/status";
+const char* topic_command = "singfirewire/relay/command";
+
+// ส่วนที่เหลือคงเดิมทั้งหมด
 
 // Pin definitions
 const int LED_PIN = 2;         // LED สำหรับแสดงสถานะทั้งหมด
