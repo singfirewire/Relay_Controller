@@ -48,12 +48,26 @@ function connectMQTT() {
 }
 
 function onConnect() {
-  console.log('Connected to MQTT broker');
-  const subscribeOptions = {
-    qos: 1
-  };
-  mqttClient.subscribe(statusTopic, subscribeOptions);
-}
+      console.log('Connected to MQTT broker');
+      const subscribeOptions = {
+        qos: 1
+      };
+      mqttClient.subscribe(statusTopic, subscribeOptions);
+    
+      // Publish empty message to request status from ESP32
+      const message = new Paho.MQTT.Message('');
+      message.destinationName = topic_command;
+      mqttClient.send(message);
+    }
+    
+    function updateStatus(status) {
+      try {
+        const mqttStatus = mqttClient.isConnected() ? 'Connected' : 'Disconnected';
+        document.getElementById('wifi-status').textContent =
+          `WiFi: ${status.wifi_connected ? 'เชื่อมต่อแล้ว' : 'ไม่ได้เชื่อมต่อ'} | MQTT: ${mqttStatus}`;
+    
+        document.getElementById('signal-strength').textContent =
+          `RSSI: ${status.wifi_rssi} dBm`;
 
 function onFailure(message) {
   console.log('Failed to connect: ' + message.errorMessage);
@@ -73,6 +87,8 @@ function onMessageArrived(message) {
   try {
     const status = JSON.parse(message.payloadString);
     updateStatus(status);
+
+    
   } catch (e) {
     console.error('Error parsing message:', e);
   }
