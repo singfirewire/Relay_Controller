@@ -1,10 +1,10 @@
 // MQTT configuration
 const broker = 'broker.hivemq.com';
-const wsPort = 8884; // เปลี่ยนเป็น secure port
+const wsPort = 443;  // Alternative port for MQTT over WSS
 const deviceId = 'esp32_timer_relay_01_web' + Math.random().toString(16).substr(2, 8);
 const mqttClient = new Paho.MQTT.Client(broker, wsPort, deviceId);
 
-// MQTT topics ใช้ topic ที่เฉพาะเจาะจงมากขึ้น
+// MQTT topics
 const statusTopic = 'singfirewire/relay/status'; 
 const relay1Topic = 'singfirewire/relay1/control';
 const relay2Topic = 'singfirewire/relay2/control'; 
@@ -16,19 +16,17 @@ mqttClient.onMessageArrived = onMessageArrived;
 function connectMQTT() {
    const options = {
        timeout: 3,
-       useSSL: true, // เพิ่ม SSL
+       useSSL: true,
        onSuccess: onConnect,
        onFailure: onFailure,
-       reconnect: true, // เพิ่มการ reconnect อัตโนมัติ
-       keepAliveInterval: 30 // ส่ง ping ทุก 30 วินาที
+       reconnect: true,
+       keepAliveInterval: 30
    };
    mqttClient.connect(options);
 }
 
 function onConnect() {
    console.log('Connected to MQTT broker');
-   mqttClient.subscribe(statusTopic);
-   // Subscribe แบบ QoS 1 เพื่อให้แน่ใจว่าได้รับข้อความ
    const subscribeOptions = {
        qos: 1
    };
@@ -37,7 +35,6 @@ function onConnect() {
 
 function onFailure(message) {
    console.log('Failed to connect: ' + message.errorMessage);
-   // เพิ่มการแสดงสถานะการเชื่อมต่อ
    document.getElementById('wifi-status').textContent = 'MQTT: Disconnected';
    setTimeout(connectMQTT, 5000);
 }
@@ -68,10 +65,10 @@ function controlRelay(relayNumber, action) {
    const topic = relayNumber === 1 ? relay1Topic : relay2Topic;
    const message = new Paho.MQTT.Message(JSON.stringify({
        action: action,
-       timestamp: Date.now() // เพิ่ม timestamp
+       timestamp: Date.now()
    }));
    message.destinationName = topic;
-   message.qos = 1; // ใช้ QoS 1
+   message.qos = 1;
    message.retained = false;
 
    try {
@@ -83,7 +80,6 @@ function controlRelay(relayNumber, action) {
 
 function updateStatus(status) {
    try {
-       // อัพเดทสถานะ WiFi และ MQTT
        const mqttStatus = mqttClient.isConnected() ? 'Connected' : 'Disconnected';
        document.getElementById('wifi-status').textContent = 
            `WiFi: ${status.wifi_connected ? 'Connected' : 'Disconnected'} | MQTT: ${mqttStatus}`;
@@ -91,7 +87,6 @@ function updateStatus(status) {
        document.getElementById('signal-strength').textContent = 
            `RSSI: ${status.wifi_rssi} dBm`;
 
-       // อัพเดทเวลาของ Relay 1
        if (status.relay1?.active) {
            const minutes = Math.floor(status.relay1.remaining_seconds / 60);
            const seconds = status.relay1.remaining_seconds % 60;
@@ -101,7 +96,6 @@ function updateStatus(status) {
            document.getElementById('timer1').textContent = '40:00';
        }
 
-       // อัพเดทเวลาของ Relay 2
        if (status.relay2?.active) {
            const minutes = Math.floor(status.relay2.remaining_seconds / 60);
            const seconds = status.relay2.remaining_seconds % 60;
