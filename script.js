@@ -12,6 +12,27 @@ const relay2Topic = 'singfirewire/relay2/control';
 mqttClient.onConnectionLost = onConnectionLost;
 mqttClient.onMessageArrived = onMessageArrived;
 
+// เพิ่มที่ script.js
+document.addEventListener('DOMContentLoaded', function() {
+    // จัดการ click event สำหรับทุกปุ่ม
+    document.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const relay = this.dataset.relay;
+            const action = this.dataset.action;
+            if (relay && action) {
+                controlRelay(parseInt(relay), action);
+            }
+        });
+        
+        // เพิ่ม touch events สำหรับมือถือ
+        button.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            this.click();
+        });
+    });
+});
+
+
 // Connect to MQTT broker
 function connectMQTT() {
    const options = {
